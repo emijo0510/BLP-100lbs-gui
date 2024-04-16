@@ -17,7 +17,19 @@ root.title(‘LFRE 100lbs GUI’) # GUI Title
 frame = ttk.Frame(root)
 frame.pack(fill=tk.BOTH, expand=True)
 
-# Create three Figures and Axes for the plots
+# Create five Figures and Axes for the plots
+fig1, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 3)
+fig2, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 4)
+fig3, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(1, 5)
+fig4, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(2, 4)
+fig5, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(2, 5)
+fig6, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(3, 5)
+
+ax1.set_xlabel("Pressure Transducer 1")
+ax2.set_xlabel("Pressure Transducer 2")
+ax3.set_xlabel("Pressure Transducer 3")
+ax4.set_xlabel("Pressure Transducer 4")
+ax5.set_xlabel("Pressure Transducer 5")
 
 # graph label
 Thrust_label = tk.label(root, text = ‘Thrust’, font (fontname,fontsize) 

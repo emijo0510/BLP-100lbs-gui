@@ -8,3 +8,13 @@ root.geometry() # dimensions of frame
 root.title(‘LFRE GUI’) # GUI Title
 
 # create a frame for the plots
+
+# Create three Figures and Axes for the plots
+
+# Initialize data for the plots
+
+# Functions to update the plots
+
+# Create a button to start updating the plots
+
+

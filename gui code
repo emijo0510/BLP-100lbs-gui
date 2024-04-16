@@ -1,0 +1,4 @@
+Import matplotlib.pyplot - for line graphs
+Import Tkinter - for GUI
+Import Time - spark/burn times
+

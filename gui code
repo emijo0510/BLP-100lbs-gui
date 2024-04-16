@@ -11,9 +11,11 @@ Import Time - spark/burn times
 # create a tkinter window
 root = tk.TK() # create initial frame
 root.geometry() # dimensions of frame
-root.title(‘LFRE GUI’) # GUI Title
+root.title(‘LFRE 100lbs GUI’) # GUI Title
 
 # create a frame for the plots
+frame = ttk.Frame(root)
+frame.pack(fill=tk.BOTH, expand=True)
 
 # Create three Figures and Axes for the plots
 
@@ -22,7 +24,12 @@ root.title(‘LFRE GUI’) # GUI Title
 # Functions to update the plots
 
 # Create a button to start updating the plots
+Start_button = tk.Button(root, text = ‘Start’, command = start_button_clicked)
+Start_button.pack()
 
 # Create a button to quit the application
+Abort_button = tk.Button(frame, text = ‘Abort’, command = abort_button_clicked)
+Abort_button.pack()
+
 
 

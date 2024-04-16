@@ -31,6 +31,10 @@ Start_button.pack()
 Abort_button = tk.Button(frame, text = ‘Abort’, command = abort_button_clicked)
 Abort_button.pack()
 
+# Create a coil button
+Coil_button = tk.Button(root, text = ‘Coil’, command = spark_button)
+Coil_button.pack()
+
 # Add Valve and BS buttons
 valve_frame = ttk.Frame(root)
 valve_frame.pack()
@@ -46,6 +50,12 @@ FV02_valve.pack()
 
 OV02_valve = tk.Button(root, text = ‘OV02’, command = open_valve)
 OV02_valve.pack()
+
+
+def spark_button():
+
+
+root.mainloop()
 
 
 

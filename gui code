@@ -1,3 +1,9 @@
+'''
+    Engineer: Emily Jones and Emily Guo
+    Date Created: 4/15/24
+    
+'''
+
 Import matplotlib.pyplot - for line graphs
 Import Tkinter - for GUI
 Import Time - spark/burn times

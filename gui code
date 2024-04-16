@@ -31,5 +31,21 @@ Start_button.pack()
 Abort_button = tk.Button(frame, text = ‘Abort’, command = abort_button_clicked)
 Abort_button.pack()
 
+# Add Valve and BS buttons
+valve_frame = ttk.Frame(root)
+valve_frame.pack()
+
+FV04_valve = tk.Button(root, text = ‘FV04’, command = open_valve)
+FV04_valve. pack()
+
+OV04_valve = tk.Button(root, text = ‘OV04’, command = open_valve)
+OV04_valve.pack()
+
+FV02_valve = tk.Button(root, text = ‘FV02’, command = open_valve)
+FV02_valve.pack()
+
+OV02_valve = tk.Button(root, text = ‘OV02’, command = open_valve)
+OV02_valve.pack()
+
 
 

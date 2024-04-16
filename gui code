@@ -2,3 +2,9 @@ Import matplotlib.pyplot - for line graphs
 Import Tkinter - for GUI
 Import Time - spark/burn times
 
+# create a tkinter window
+root = tk.TK() # create initial frame
+root.geometry() # dimensions of frame
+root.title(‘LFRE GUI’) # GUI Title
+
+# create a frame for the plots

@@ -17,4 +17,6 @@ root.title(‘LFRE GUI’) # GUI Title
 
 # Create a button to start updating the plots
 
+# Create a button to quit the application
+
 

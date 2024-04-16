@@ -19,6 +19,13 @@ frame.pack(fill=tk.BOTH, expand=True)
 
 # Create three Figures and Axes for the plots
 
+# graph label
+Thrust_label = tk.label(root, text = ‘Thrust’, font (fontname,fontsize) 
+thrust_label.pack()
+
+# button to display error
+Good_Error = tk.Button(root, text = ‘Good’, command = ‘update_error’) 
+
 # Initialize data for the plots
 
 # Functions to update the plots

@@ -25,6 +25,7 @@ fig4, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(2, 4)
 fig5, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(2, 5)
 fig6, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(3, 5)
 
+# do we need to inlude two more transducers? one for thrust and one for temp?
 ax1.set_xlabel("Pressure Transducer 1")
 ax2.set_xlabel("Pressure Transducer 2")
 ax3.set_xlabel("Pressure Transducer 3")

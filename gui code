@@ -82,12 +82,10 @@ canvas5 = FigureCanvasTkAgg(fig5, master=frame)
 canvas_widget5 = canvas5.get_tk_widget()
 canvas_widget5.pack(fill=tk.BOTH, expand=True)
 
-# do we need to inlude two more transducers? one for thrust and one for temp?
-ax1.set_xlabel("Pressure Transducer 1")
-ax2.set_xlabel("Pressure Transducer 2")
-ax3.set_xlabel("Pressure Transducer 3")
-ax4.set_xlabel("Pressure Transducer 4")
-ax5.set_xlabel("Pressure Transducer 5")
+# do we need to inlude two more transducers? one for thrust and one for temp? Idk if this is right
+fig6, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(4, 5)
+ax1.set_xlabel("Thrust Transducer")
+ax2.set_xlabel("Temperature Transducer")
 
 # graph label
 Thrust_label = tk.label(root, text = ‘Thrust’, font (fontname,fontsize) 

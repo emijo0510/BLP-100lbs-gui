@@ -1,0 +1,165 @@
+## Caleb's Code 9/9/24
+
+## Section 1: Setup
+#pip install pyfluids
+#pip install rocketcea
+#pip install CoolProp
+from rocketcea.cea_obj import CEA_Obj
+from pylab import *
+import math
+from CoolProp.CoolProp import PropsSI
+print('check')
+pi = 3.14159265358979323846264338
+
+## Section 2: ISP Calcs (based on code Theo sent: not updated for 100 lb engine)
+# ISP Calcs
+
+Pc_arr = [500,250,200] # psia
+
+ispObj = CEA_Obj(propName='', oxName='LOX', fuelName="Isopropanol")
+for Pc in Pc_arr:
+    ispArr = []
+    MR = 1
+    mrArr = []
+    while MR < 8:
+        ispArr.append( ispObj.get_Isp(Pc=Pc, MR=MR) )
+        mrArr.append(MR)
+        MR += 0.05
+    plot(mrArr, ispArr, label='Pc= %g psia'%Pc)
+
+legend(loc='best')
+grid(True)
+title( ispObj.desc )
+xlabel( 'Mixture Ratio' )
+ylabel( 'Isp (s)' )
+savefig('cea_plot.png', dpi=120)
+
+show()
+
+## Ox Line Calcs
+# O/F
+OF = 2
+# Ox Flow Calcs Check
+
+# Ox Inlet Inputs
+od_tube = 0.25 # in
+wall_tube = 0.02 # in
+tube_length_ox_E = 10 # ft
+mdot_ox_E = 0.365 # lb/s
+Cd_ox_or = 0.65
+d_ox_or = 0.1654 # in
+T_ox = 300 # K
+P_ox_E1 = 854 # psia
+
+# Ox Inlet Calcs
+id_tube = od_tube - 2*wall_tube # in
+A_tube = pi/4*id_tube**2 / 144 / 3.2808**2 # m^2
+tube_length_ox = tube_length_ox_E / 3.2808 # m
+mdot_ox = mdot_ox_E / 2.20462 # kg/s
+A_ox_or = pi/4*d_ox_or**2 / 144 / 3.2808**2 # m^2
+P_ox_1 = P_ox_E1 / 14.5038 # bar
+rho_ox = PropsSI('D','T',T_ox,'P',P_ox_1*10**5,'N2O')
+gamma_ox = PropsSI('Cpmass','T',T_ox,'P',P_ox_1*10**5,'N2O')/PropsSI('Cvmass','T',T_ox,'P',P_ox_1*10**5,'N2O')
+P_ox_cav = PropsSI('P','T',T_ox,'Q',0,'N2O')/10**5
+rho_ox_cav = PropsSI('D','T',T_ox,'Q',0,'N2O')
+tube_vel_ox = mdot_ox / (rho_ox * A_tube)
+
+# Ox Major Losses (Assume Incompressible)
+mu_ox = PropsSI('V','T',T_ox,'P',P_ox_1*10**5,'CO2') # kg/(m*s) OR Pa*s
+# Note: viscosity for nitrous is not available, so we use that of CO2 as an approximation to find Reynolds number
+Re_ox = (rho_ox*tube_vel_ox*id_tube/12/3.2808) / mu_ox # Reynolds Number
+roughness = 0.15*10**(-3) # absolute pipe roughness in m: this is approximate but should have little effect on Darcy Friction Factor
+f = (-1/(1.8*log10(6.9/Re_ox + (roughness/(id_tube/12/3.2808 * 3.7))**1.11)))**2 # Darcy friction factor
+P_ox_2_incomp = (P_ox_1*10**5 - (rho_ox*f*tube_length_ox*tube_vel_ox**2) / (2*id_tube/12/3.2808))/10**5 # bar
+
+# Ox Orifice Calcs
+#P_ox_2_incomp = P_ox_1 - ((mdot_ox / (Cd_ox_or * A_ox_or))**2 / (2*rho_ox)) / 10**5
+mdot_ox_cav = Cd_ox_or*A_ox_or*(rho_ox_cav*(P_ox_1 - P_ox_cav)*10**5) # kg/s
+
+print(' ')
+print('Ox Inlet Flow Calcs')
+print(' ')
+print('Ox Temperature: ' + str(T_ox) + ' K')
+print('Ox Density: ' + str(rho_ox) + ' kg/m^3')
+print('Ox Cavitation Pressure: ' + str(P_ox_cav*14.5038) + ' psia')
+print('Ox Tank Pressure: ' + str(P_ox_1*14.5038) + ' psia')
+print('Ox Valve Inlet Pressure: ' + str(P_ox_2_incomp*14.5038) + ' psia')
+print('1/4" Tube Velocity: ' + str(tube_vel_ox) + ' m/s')
+
+## Ox Injection Flow Calcs
+
+# Ox Injector FLow Inputs
+ox_inj_or = 6
+d_ox_inj = 0.061 # in
+Cd_ox_inj = 0.6
+
+# Ox Injector Flow Calcs
+A_ox_inj = ox_inj_or*pi/4*d_ox_inj**2 / 144 / 3.2808**2 # m^2
+rho_ox_inj = PropsSI('D','T',T_ox,'P',P_ox_2_incomp*10**5,'N2O')
+P_ox_cav = PropsSI('P','T',T_ox,'Q',0,'N2O')/10**5
+P_ox_cav_E = P_ox_cav*14.5038
+Pc = P_ox_3_incomp - ((mdot_ox / (Cd_ox_inj * A_ox_inj))**2 / (2*rho_ox_inj)) / 10**5
+Pc_E = Pc * 14.5038 # psia
+inj_vel_ox = mdot_ox / (rho_ox * A_ox_inj)
+
+print(' ')
+print('Ox Injector Flow Calcs')
+print(' ')
+print('Ox Temperature: ' + str(T_ox) + ' K')
+print('Ox Density: ' + str(rho_ox) + ' kg/m^3')
+print('Ox Gamma: ' + str(gamma_ox))
+print('Ox Cavitation Pressure: ' + str(P_ox_cav_E) + ' psia')
+print('Ox Injector Inlet Pressure: ' + str(P_ox_3_incomp*14.5038) + ' psia')
+print('Chamber Pressure: ' + str(Pc_E) + ' psia')
+print('Injection Velocity: ' + str(inj_vel_ox) + ' m/s')
+
+
+## Ox Flow Calcs Check
+# Inputs
+T_f = 290 # K
+P_f_E1 = 800 # psia
+od_tube = 0.25 # in
+tube_length_f_E = 3 # ft
+wall_tube = 0.02 # in
+Cd_f_or = 0.65
+d_f_or = 0.0748 # in
+
+# Calcs
+id_tube = od_tube - 2*wall_tube # in
+A_tube_f = pi/4*id_tube**2 / 144 / 3.2808**2 # m^2
+tube_length_f = tube_length_f_E / 3.2808 # m
+mdot_f_E = mdot_ox_E / OF # lb/s
+mdot_f = mdot_f_E / 2.20462 # kg/s
+A_f_or = pi/4*d_f_or**2 / 144 / 3.2808**2 # m^2
+P_f_1 = P_f_E1 / 14.5038 # bar
+rho_f = PropsSI('D','T',T_f,'P',P_f_1*10**5,'ethanol') # kg/m^3
+P_f_cav = PropsSI('P','T',T_f,'Q',0,'ethanol')/10**5 # bar
+tube_vel_f = mdot_f / (rho_f * A_tube_f) # m/s
+
+# Ox Major Losses (Assume Incompressible)
+mu_f = PropsSI('V','T',T_f,'P',P_f_1*10**5,'C2H6O') # kg/(m*s) OR Pa*s
+# Note: IPA is not one of the fluids in the Coolprop database, so we approximate its properties by using those of ethanol
+Re_f = (rho_f*tube_vel_f*id_tube/12/3.2808) / mu_ox # Reynolds Number
+roughness = 0.15*10**(-3) # absolute pipe roughness in m: this is approximate but should have little effect on Darcy Friction Factor
+f = (-1/(1.8*log10(6.9/Re_f + (roughness/(id_tube/12/3.2808 * 3.7))**1.11)))**2 # Darcy friction factor
+P_f_2 = (P_f_1*10**5 - (rho_f*f*tube_length_f*tube_vel_f**2) / (2*id_tube/12/3.2808))/10**5 # bar
+
+#P_f_2 = P_f_1 - ((mdot_f / (Cd_f_or * A_f_or))**2 / (2*rho_f)) / 10**5
+# Print Outputs
+print(' ')
+print('Fuel Inlet Flow Calcs')
+print(' ')
+print('Fuel Temperature: ' + str(T_f) + ' K')
+print('Fuel Density: ' + str(rho_f) + ' kg/m^3')
+print('Fuel Cavitation Pressure: ' + str(P_f_cav*14.5038) + ' psia')
+print('Fuel Tank Pressure: ' + str(P_f_1*14.5038) + ' psia')
+print('Fuel Valve Inlet Pressure: ' + str(P_f_2*14.5038) + ' psia')
+print('1/4" Tube Velocity: ' + str(tube_vel_f) + ' m/s')
+
+## Find water volume of big nitrous cylinder
+weight_cyl_ox = 50 # lb
+mass_cyl_ox = weight_cyl_ox / 2.20462 # kg
+vol_cyl_ox = mass_cyl_ox / rho_ox # m^3
+vol_cyl_ox_sanitycheck = pi/4*(6/12)**2*5 # ft^3
+print('Water volume of nitrous cylinder: ' + str(vol_cyl_ox) + ' m^3 (' + str(vol_cyl_ox*3.2808**3) + ' ft^3)')
+print('Water volume of nitrous cylinder sanity check: ' + str(vol_cyl_ox_sanitycheck) + ' ft^3')

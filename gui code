@@ -1,7 +1,9 @@
+
+
 '''
-    Engineers: Emily Jones, Emily Guo, Advika 
+    Engineers: Emily Jones, Emily Guo  
     Date Created: 4/15/24
-    
+    First Draft
 '''
 
 Import matplotlib.pyplot - for line graphs
@@ -141,6 +143,121 @@ Record_data_button = tk.Button(root, text='Record Data', command=record_data)
 Record_data_button.pack()
 
 root.mainloop()
+
+'''
+    Engineers: Advika Govindarajan  
+    Date Created: 09/15/24
+    Current Draft
+'''
+import tkinter as tk
+from tkinter import messagebox
+
+# Function to toggle the button's color and text when pressed
+def toggle_button(button):
+    current_color = button['bg']
+    if current_color == 'green':
+        button.config(bg='red', text='Abort')
+    else:
+        button.config(bg='green', text='Start')
+
+# Initialize tkinter window
+root = tk.Tk()
+root.title("BLP GUI")
+root.geometry("900x700")
+
+# Create frames and labels for the GUI layout
+def create_sensor_frame(root, label_text):
+    frame = tk.Frame(root, padx=5, pady=5)
+    frame.pack_propagate(False)
+    frame.configure(width=200, height=100)
+    
+    status_label = tk.Label(frame, text=label_text, font=('Arial', 10))
+    status_label.pack(anchor="n")
+    
+    state_label = tk.Label(frame, text="Good/Error", font=('Arial', 10))
+    state_label.pack(anchor="w")
+
+    psi_label = tk.Label(frame, text="PSI: 0", font=('Arial', 10))
+    psi_label.pack(anchor="w")
+
+    line_graph = tk.Label(frame, text="Line graph", bg="white", width=25, height=3)
+    line_graph.pack(anchor="center", pady=10)
+
+    return frame
+
+# Top-left thrust and temp sections
+thrust_frame = create_sensor_frame(root, "Thrust")
+thrust_frame.grid(row=0, column=0)
+
+temp_frame = create_sensor_frame(root, "Temp")
+temp_frame.grid(row=0, column=1)
+
+# Pressure sections
+pressure1_frame = create_sensor_frame(root, "Pressure 1")
+pressure1_frame.grid(row=1, column=0)
+
+pressure2_frame = create_sensor_frame(root, "Pressure 2")
+pressure2_frame.grid(row=1, column=1)
+
+pressure3_frame = create_sensor_frame(root, "Pressure 3")
+pressure3_frame.grid(row=2, column=0)
+
+pressure4_frame = create_sensor_frame(root, "Pressure 4")
+pressure4_frame.grid(row=2, column=1)
+
+pressure5_frame = create_sensor_frame(root, "Pressure 5")
+pressure5_frame.grid(row=3, column=0, columnspan=2)
+
+# Start and Abort buttons
+start_button = tk.Button(root, text="Start", bg="green", fg="white", width=10, height=2,
+                         command=lambda: toggle_button(start_button))
+start_button.grid(row=4, column=0, pady=10)
+
+abort_button = tk.Button(root, text="Abort", bg="red", fg="white", width=10, height=2)
+abort_button.grid(row=4, column=1, pady=10)
+
+# FV and OV buttons
+fv04_button = tk.Button(root, text="FV-04", width=10, height=2)
+fv04_button.grid(row=5, column=0, padx=10)
+
+ov04_button = tk.Button(root, text="OV-04", width=10, height=2)
+ov04_button.grid(row=5, column=1, padx=10)
+
+fv02_button = tk.Button(root, text="FV-02", width=10, height=2)
+fv02_button.grid(row=6, column=0, padx=10)
+
+ov02_button = tk.Button(root, text="OV-02", width=10, height=2)
+ov02_button.grid(row=6, column=1, padx=10)
+
+# Spark time and Burn time entries
+spark_time_label = tk.Label(root, text="Spark time", font=('Arial', 10))
+spark_time_label.grid(row=7, column=0, pady=5)
+spark_time_entry = tk.Entry(root, width=10)
+spark_time_entry.grid(row=8, column=0)
+
+burn_time_label = tk.Label(root, text="Burn time", font=('Arial', 10))
+burn_time_label.grid(row=7, column=1, pady=5)
+burn_time_entry = tk.Entry(root, width=10)
+burn_time_entry.grid(row=8, column=1)
+
+# Record Data, HITL, and Coil buttons
+record_button = tk.Button(root, text="Record Data", width=10, height=2)
+record_button.grid(row=5, column=2, padx=10)
+
+hitl_button = tk.Button(root, text="HITL", width=10, height=2)
+hitl_button.grid(row=6, column=2, padx=10)
+
+coil_button = tk.Button(root, text="Coil", width=10, height=2)
+coil_button.grid(row=7, column=2, padx=10)
+
+# Add refresh rate/time placeholder
+refresh_label = tk.Label(root, text="refresh rate / time", font=('Arial', 10))
+refresh_label.grid(row=0, column=2)
+
+# Run the tkinter main loop
+root.mainloop()
+
+
 
 
 

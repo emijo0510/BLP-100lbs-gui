@@ -198,27 +198,27 @@ temp_frame.grid(row=0, column=1)
 
 # Pressure sections
 pressure1_frame = create_sensor_frame(root, "Pressure 1")
-pressure1_frame.grid(row=1, column=0)
+pressure1_frame.grid(row=0, column=2)
 
 pressure2_frame = create_sensor_frame(root, "Pressure 2")
-pressure2_frame.grid(row=1, column=1)
+pressure2_frame.grid(row=1, column=0)
 
 pressure3_frame = create_sensor_frame(root, "Pressure 3")
-pressure3_frame.grid(row=2, column=0)
+pressure3_frame.grid(row=1, column=1)
 
 pressure4_frame = create_sensor_frame(root, "Pressure 4")
-pressure4_frame.grid(row=2, column=1)
+pressure4_frame.grid(row=1, column=2)
 
 pressure5_frame = create_sensor_frame(root, "Pressure 5")
-pressure5_frame.grid(row=3, column=0, columnspan=2)
+pressure5_frame.grid(row=2, column=1)
 
 # Start and Abort buttons
 start_button = tk.Button(root, text="Start", bg="green", fg="white", width=10, height=2,
                          command=lambda: toggle_button(start_button))
-start_button.grid(row=4, column=0, pady=10)
+start_button.grid(row=4, column=0, pady=10, columnspan=2)
 
 abort_button = tk.Button(root, text="Abort", bg="red", fg="white", width=10, height=2)
-abort_button.grid(row=4, column=1, pady=10)
+abort_button.grid(row=4, column=1, pady=10, columnspan=2)
 
 # FV and OV buttons
 fv04_button = tk.Button(root, text="FV-04", width=10, height=2)
@@ -256,9 +256,7 @@ coil_button.grid(row=7, column=2, padx=10)
 
 # Add refresh rate/time placeholder
 refresh_label = tk.Label(root, text="refresh rate / time", font=('Arial', 10))
-refresh_label.grid(row=0, column=2)
+refresh_label.grid(row=0, column=4)
 
 # Run the tkinter main loop
 root.mainloop()
-
-

@@ -11,7 +11,7 @@ import random
 def toggle_button(button):
     current_color = button['bg']
     if current_color == 'green':
-        button.config(bg='red', text='Abort')
+        button.config(bg='red', text='In Progress')
     else:
         button.config(bg='green', text='Start')
 
@@ -22,6 +22,9 @@ def draw_graph(canvas, data_points):
     
     width = canvas.winfo_width()
     height = canvas.winfo_height()
+    
+    if len(data_points) < 2:
+        return  # No graph to draw
     
     # Calculate spacing and scaling
     x_step = width / (len(data_points) - 1)
@@ -35,14 +38,15 @@ def draw_graph(canvas, data_points):
     for i in range(len(points) - 1):
         canvas.create_line(points[i], points[i + 1], fill='blue', width=2)
 
-# Function to generate new random data and update the graph
-def update_graph(canvas):
-    # Simulate random data points (e.g., 10 points)
-    data_points = [random.randint(50, 150) for _ in range(10)]
-    draw_graph(canvas, data_points)
+# Function to update the graph with data from an external source
+def update_graph(canvas, external_data_source):
+    # Get new data points from the external array (for example, the next 10 values)
+    if external_data_source and len(external_data_source) > 0:
+        data_points = external_data_source.pop(0)  # Get the first set of data points
+        draw_graph(canvas, data_points)
     
     # Schedule the next update
-    canvas.after(2000, update_graph, canvas)  # Refresh every 2 seconds
+    canvas.after(2000, update_graph, canvas, external_data_source)  # Refresh every 2 seconds
 
 # Initialize tkinter window
 root = tk.Tk()
@@ -50,7 +54,7 @@ root.title("BLP GUI")
 root.geometry("900x700")
 
 # Create frames and labels for the GUI layout
-def create_sensor_frame(root, label_text):
+def create_sensor_frame(root, label_text, external_data_source):
     frame = tk.Frame(root, padx=5, pady=5)
     frame.pack_propagate(False)
     frame.configure(width=300, height=200)
@@ -68,41 +72,50 @@ def create_sensor_frame(root, label_text):
     canvas = tk.Canvas(frame, bg="white", width=250, height=100)
     canvas.pack(anchor="center", pady=10)
     
-    # Start updating the graph with random data
-    update_graph(canvas)
+    # Start updating the graph with data from external data source
+    update_graph(canvas, external_data_source)
     
     return frame
 
+# Simulated external data source (List of arrays, each representing a new data set)
+external_data = [
+    [random.randint(50, 150) for _ in range(10)],
+    [random.randint(60, 160) for _ in range(10)],
+    [random.randint(55, 155) for _ in range(10)],
+    [random.randint(65, 165) for _ in range(10)],
+    [random.randint(50, 150) for _ in range(10)]
+]
+
 # Top-left thrust and temp sections
-thrust_frame = create_sensor_frame(root, "Thrust")
+thrust_frame = create_sensor_frame(root, "Thrust", external_data.copy())  # Pass a copy of the external data
 thrust_frame.grid(row=0, column=0)
 
-temp_frame = create_sensor_frame(root, "Temp")
+temp_frame = create_sensor_frame(root, "Temp", external_data.copy())  # Pass a copy of the external data
 temp_frame.grid(row=0, column=1)
 
 # Pressure sections
-pressure1_frame = create_sensor_frame(root, "Pressure 1")
-pressure1_frame.grid(row=1, column=0)
+pressure1_frame = create_sensor_frame(root, "Pressure 1", external_data.copy())
+pressure1_frame.grid(row=0, column=2)
 
-pressure2_frame = create_sensor_frame(root, "Pressure 2")
-pressure2_frame.grid(row=1, column=1)
+pressure2_frame = create_sensor_frame(root, "Pressure 2", external_data.copy())
+pressure2_frame.grid(row=1, column=0)
 
-pressure3_frame = create_sensor_frame(root, "Pressure 3")
-pressure3_frame.grid(row=2, column=0)
+pressure3_frame = create_sensor_frame(root, "Pressure 3", external_data.copy())
+pressure3_frame.grid(row=1, column=1)
 
-pressure4_frame = create_sensor_frame(root, "Pressure 4")
-pressure4_frame.grid(row=2, column=1)
+pressure4_frame = create_sensor_frame(root, "Pressure 4", external_data.copy())
+pressure4_frame.grid(row=1, column=2)
 
-pressure5_frame = create_sensor_frame(root, "Pressure 5")
-pressure5_frame.grid(row=3, column=0, columnspan=2)
+pressure5_frame = create_sensor_frame(root, "Pressure 5", external_data.copy())
+pressure5_frame.grid(row=2, column=1)
 
 # Start and Abort buttons
 start_button = tk.Button(root, text="Start", bg="green", fg="white", width=10, height=2,
                          command=lambda: toggle_button(start_button))
-start_button.grid(row=4, column=0, pady=10)
+start_button.grid(row=4, column=0, pady=10, columnspan=2)
 
 abort_button = tk.Button(root, text="Abort", bg="red", fg="white", width=10, height=2)
-abort_button.grid(row=4, column=1, pady=10)
+abort_button.grid(row=4, column=1, pady=10, columnspan=2)
 
 # FV and OV buttons
 fv04_button = tk.Button(root, text="FV-04", width=10, height=2)
@@ -140,9 +153,7 @@ coil_button.grid(row=7, column=2, padx=10)
 
 # Add refresh rate/time placeholder
 refresh_label = tk.Label(root, text="refresh rate / time", font=('Arial', 10))
-refresh_label.grid(row=0, column=2)
+refresh_label.grid(row=0, column=4)
 
 # Run the tkinter main loop
 root.mainloop()
-#
-

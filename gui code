@@ -72,6 +72,7 @@ def create_sensor_frame(root, label_text, external_data_source):
     canvas = tk.Canvas(frame, bg="white", width=250, height=100)
     canvas.pack(anchor="center", pady=10)
     
+
     # Start updating the graph with data from external data source
     update_graph(canvas, external_data_source)
     
@@ -110,25 +111,89 @@ pressure5_frame = create_sensor_frame(root, "Pressure 5", external_data.copy())
 pressure5_frame.grid(row=2, column=1)
 
 # Start and Abort buttons
-start_button = tk.Button(root, text="Start", bg="green", fg="white", width=10, height=2,
-                         command=lambda: toggle_button(start_button))
+# Set up the Start button with the start_engine function
+
+def start_engine():
+    # Step 1: Check if required valves are open
+    valves_open = True
+    if not check_fv02():  # Replace with actual check logic
+        print("Error: FV-02 is not open.")
+        valves_open = False
+    if not check_fv04():  # Replace with actual check logic
+        print("Error: FV-04 is not open.")
+        valves_open = False
+    if not check_ov02():  # Replace with actual check logic
+        print("Error: OV-02 is not open.")
+        valves_open = False
+    if not check_ov04():  # Replace with actual check logic
+        print("Error: OV-04 is not open.")
+        valves_open = False
+
+    if not valves_open:
+        print("Error: Not all required valves are open.")
+        return
+
+    # Step 2: Retrieve spark and burn time
+    try:
+        spark_time = int(spark_time_entry.get())
+        burn_time = int(burn_time_entry.get())
+    except ValueError:
+        print("Error: Invalid spark or burn time entry.")
+        return
+
+    # Step 3: Start spark frequency
+    print(f"Starting spark frequency for {spark_time} seconds.")
+    # Code to start spark frequency would go here
+
+    # Step 4: Start the engine
+    print(f"Starting engine with burn time of {burn_time} seconds.")
+    # Code to start the engine would go here
+
+    
+start_button = tk.Button(root, text="Start", bg="green", fg="white", width=10, height=2, command=start_engine)
 start_button.grid(row=4, column=0, pady=10, columnspan=2)
+
 
 abort_button = tk.Button(root, text="Abort", bg="red", fg="white", width=10, height=2)
 abort_button.grid(row=4, column=1, pady=10, columnspan=2)
 
 # FV and OV buttons
-fv04_button = tk.Button(root, text="FV-04", width=10, height=2)
+# Functions to open/close valves and update button text
+valve_states = {"FV-02": False, "FV-04": False, "OV-02": False, "OV-04": False}
+
+def toggle_valve(button, valve_name):
+    # Toggle the valve's state
+    valve_states[valve_name] = not valve_states[valve_name]
+    
+    if valve_states[valve_name]:
+        # Code to open the valve
+        print(f"{valve_name} opened.")
+        button.config(text=f"{valve_name} (Open)", bg="green")
+    else:
+        # Code to close the valve
+        print(f"{valve_name} closed.")
+        button.config(text=f"{valve_name} (Closed)", bg="red")
+
+# FV-04 Button
+fv04_button = tk.Button(root, text="FV-04 (Closed)", width=10, height=2, bg="red",
+                        command=lambda: toggle_valve(fv04_button, "FV-04"))
 fv04_button.grid(row=5, column=0, padx=10)
 
-ov04_button = tk.Button(root, text="OV-04", width=10, height=2)
+# OV-04 Button
+ov04_button = tk.Button(root, text="OV-04 (Closed)", width=10, height=2, bg="red",
+                        command=lambda: toggle_valve(ov04_button, "OV-04"))
 ov04_button.grid(row=5, column=1, padx=10)
 
-fv02_button = tk.Button(root, text="FV-02", width=10, height=2)
+# FV-02 Button
+fv02_button = tk.Button(root, text="FV-02 (Closed)", width=10, height=2, bg="red",
+                        command=lambda: toggle_valve(fv02_button, "FV-02"))
 fv02_button.grid(row=6, column=0, padx=10)
 
-ov02_button = tk.Button(root, text="OV-02", width=10, height=2)
+# OV-02 Button
+ov02_button = tk.Button(root, text="OV-02 (Closed)", width=10, height=2, bg="red",
+                        command=lambda: toggle_valve(ov02_button, "OV-02"))
 ov02_button.grid(row=6, column=1, padx=10)
+
 
 # Spark time and Burn time entries
 spark_time_label = tk.Label(root, text="Spark time", font=('Arial', 10))

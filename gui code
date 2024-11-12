@@ -201,13 +201,9 @@ ov02_button.grid(row=6, column=1, padx=10)
 # Spark time and Burn time entries
 spark_time_label = tk.Label(root, text="Spark time", font=('Arial', 10))
 spark_time_label.grid(row=7, column=0, pady=5)
-spark_time_entry = tk.Entry(root, width=10)
-spark_time_entry.grid(row=8, column=0)
 
 burn_time_label = tk.Label(root, text="Burn time", font=('Arial', 10))
 burn_time_label.grid(row=7, column=1, pady=5)
-burn_time_entry = tk.Entry(root, width=10)
-burn_time_entry.grid(row=8, column=1)
 
 # Record Data, HITL, and Coil buttons
 record_button = tk.Button(root, text="Record Data", width=10, height=2)

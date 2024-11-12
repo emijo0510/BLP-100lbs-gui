@@ -131,6 +131,7 @@ def start_engine():
 
     if not valves_open:
         print("Error: Not all required valves are open.")
+        # abort engine
         return
 
     # Step 2: Retrieve spark and burn time
@@ -149,7 +150,9 @@ def start_engine():
     print(f"Starting engine with burn time of {burn_time} seconds.")
     # Code to start the engine would go here
 
-    
+    # Step 5: Check other requirements in order to maintain a safe start and abort if needed
+
+
 start_button = tk.Button(root, text="Start", bg="green", fg="white", width=10, height=2, command=start_engine)
 start_button.grid(row=4, column=0, pady=10, columnspan=2)
 

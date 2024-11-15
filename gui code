@@ -4,6 +4,11 @@
     Date Created: 10/7/24
     Current Draft
 '''
+ST = 0
+BT = 1
+OX = 2
+FU = 3
+FL = 4
 import tkinter as tk
 import random
 
@@ -220,4 +225,20 @@ refresh_label = tk.Label(root, text="refresh rate / time", font=('Arial', 10))
 refresh_label.grid(row=0, column=4)
 
 # Run the tkinter main loop
+
+''' NEW
+import sys
+file_name = sys.argv[1]
+file_name = file_name + ".txt"
+print(file_name)
+arr = []
+file = open(file_name,'r')
+for i in range(9):
+    trash = file.readline()
+    data = file.readline()
+    arr.append(data[:-1])
+    arr = arr[:4]
+print(arr)
+'''
+
 root.mainloop()

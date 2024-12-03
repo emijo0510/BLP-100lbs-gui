@@ -1,0 +1,270 @@
+import tkinter as tk
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from tkinter import filedialog
+from matplotlib.figure import Figure
+import pandas as pd
+import os
+
+
+class GUI: 
+    
+    #Create Window 
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("BLP GUI")
+        self.window.geometry('1000x1000')
+        self.window.columnconfigure(0, weight=1)
+        self.window.columnconfigure(1, weight=1)
+        self.window.columnconfigure(2, weight=1)
+        self.window.columnconfigure(3, weight=1)
+        self.window.columnconfigure(4, weight=1)
+        
+        self.test_files = {}
+        self.widgets()
+    
+    #Add widgets
+    def widgets(self):
+        
+        #Title
+        self.title = tk.Label(self.window,
+                      text="BLP GUI",
+                      font=("Times New Roman", 25),
+                      background="light pink",
+                      foreground="black")
+        self.title.grid(row=0, columnspan=5, sticky = "nsew")
+        
+        # File Name
+        self.filename_label = tk.Label(self.window,
+                               text = "File name:",
+                               font = ("Times New Roman", 20),
+                               background = "white",
+                               foreground = "black")
+        self.filename_label.grid(row = 1, column = 0, sticky = "nsew")
+
+        #File Input
+        self.fileinput = tk.StringVar()
+        self.fileinput_entry = tk.Button(self.window,
+                                   text="Upload File",
+                                   foreground = "black",
+                                   font = ("Times New Roman", 20),
+                                   command= self.browse_button)
+        self.fileinput_entry.grid(row = 1, column = 1, sticky = "nsew", padx = 5, pady = 5)
+        
+        #self.filename_entry = tk.Entry(self.window,
+                               #textvariable = self.filename,
+                               #background = "white",
+                               #foreground = "black",
+                               #font = ("Times New Roman", 20))
+        #self.filename_entry.grid(row = 1, column = 1, sticky = "nsew", padx = 5, pady = 5)
+        
+        #Reads the Test File
+        self.readfile_button = tk.Button(self.window,
+                                 text = "Read Test",
+                                 foreground = "black",
+                                 font = ("Times New Roman", 20),)
+        self.readfile_button.grid(row = 1, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        
+        
+        #FV04 Check Button
+        self.FV04_button = tk.Button(self.window,
+                              text = "FV-04",
+                              foreground = "black",
+                              font = ("Times New Roman", 20),
+                              state = "disabled")
+        self.FV04_button.grid(row = 2, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        
+        #OV04 Check Button
+        self.OV04_button = tk.Button(self.window,
+                              text = "OV-04",
+                              foreground = "black",
+                              font = ("Times New Roman", 20),
+                              state = "disabled")
+        self.OV04_button.grid(row = 2, column = 1, sticky = "nsew", padx = 5, pady = 5)
+        
+        #FV02 Check Button
+        self.FV02_button = tk.Button(self.window,
+                              text = "FV-02",
+                              foreground = "black",
+                              font = ("Times New Roman", 20),
+                              state = "disabled")
+        self.FV02_button.grid(row = 3, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        
+        #OV02 Check Button
+        self.OV02_button = tk.Button(self.window,
+                              text = "OV-02",
+                              foreground = "black",
+                              font = ("Times New Roman", 20),
+                              state = "disabled")
+        self.OV02_button.grid(row = 3, column = 1, sticky = "nsew", padx = 5, pady = 5)
+        
+        #Start Button
+        self.start_button = tk.Button(self.window,
+                              text = "START",
+                              background = "green",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),
+                              state = "disabled",
+                              command = self.start)
+        self.start_button.grid(row = 1, column = 3, sticky = "nsew", padx = 5, pady = 5)
+        
+        #Abort Button
+        self.abort_button = tk.Button(self.window,
+                              text = "ABORT",
+                              background = "red",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),
+                              state = "disabled",
+                              command = self.abort)
+        self.abort_button.grid(row = 1, column = 4, sticky = "nsew", padx = 5, pady = 5)
+        
+        #Graphs Banner -------------------------------------------------------------------
+        self.banner_label = tk.Label(self.window,
+                                   text = "Graphs",
+                                   font = ("Times New Roman", 20),
+                                   background = "light pink",
+                                   foreground = "black")
+        self.banner_label.grid(row = 4, column = 0, columnspan = 5, sticky = "nsew", padx = 5, pady = 5)
+
+        #Temperature Label
+        self.temp_label = tk.Label(self.window,
+                              text = "Temperature",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.temp_label.grid(row = 5, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 6, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+
+        
+        #Thrust Label
+        self.thrust_label = tk.Label(self.window,
+                              text = "Thrust",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.thrust_label.grid(row = 5, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 6, column = 2, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+
+        #Pressure Transducer 1 Label
+        self.PT1_label = tk.Label(self.window,
+                              text = "Pressure Transducer 1",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.PT1_label.grid(row = 7, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 8, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+
+    
+        #Pressure Transducer 2 Label
+        self.PT2_label = tk.Label(self.window,
+                              text = "Pressure Transducer 2",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.PT2_label.grid(row = 7, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 8, column = 2, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+
+        
+        #Pressure Transducer 3 Label
+        self.PT3_label = tk.Label(self.window,
+                              text = "Pressure Transducer 3",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.PT3_label.grid(row = 9, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 10, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+
+        
+        #Pressure Transducer 4 Label
+        self.PT4_label = tk.Label(self.window,
+                              text = "Pressure Transducer 4",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.PT4_label.grid(row = 9, column = 2, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 10, column = 2, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+
+        
+        #Pressure Transducer 5 Label
+        self.PT5_label = tk.Label(self.window,
+                              text = "Pressure Transducer 5",
+                              background = "white",
+                              foreground = "black", 
+                              font = ("Times New Roman", 20),)
+        self.PT5_label.grid(row = 11, column = 0, sticky = "nsew", padx = 5, pady = 5)
+        
+        self.chart_canvas = tk.Canvas(self.window,
+                              background = "white",
+                              height = 125)
+        self.chart_canvas.grid(row = 12, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+        
+      
+        # Function Commands -----------------------------------------------------------------------------
+      
+        #Enable  
+    def enable_buttons(self):
+        # Enable Start and Abort buttons
+        self.start_button.config(state="normal")
+        self.abort_button.config(state="normal")
+        
+        # Enable check buttons
+        self.FV04_button.config(state="normal")
+        self.OV04_button.config(state="normal")
+        self.FV02_button.config(state="normal")
+        self.OV02_button.config(state="normal")
+        
+        #Upload File
+    def browse_button(self):
+        filename = filedialog.askdirectory()
+        print(filename)
+        return filename
+        
+        
+        # Start button 
+    def start(self):
+        self.start_button.config(background="green")  # Brighter green when clicked
+        self.abort_button.config(background="light coral")  # Light red remains
+        
+        # Abort button 
+    def abort(self):
+        self.abort_button.config(background="red")  # Brighter red when clicked
+        self.start_button.config(background="light green")  # Light green remains
+
+               
+        
+if __name__ == "__main__":
+    window = GUI()
+    window.window.mainloop()        
+        
+
+
+
+
+
+
+
+        

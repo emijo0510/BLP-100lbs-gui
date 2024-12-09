@@ -1,12 +1,16 @@
+'''
+    Engineers: Emily Jones & Advika Govindarajan
+    Date Created: 10/7/24
+    Current Draft
+'''
+
 import tkinter as tk
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+#import matplotlib.pyplot as plt 
+#from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import filedialog
 from matplotlib.figure import Figure
-import pandas as pd
+#import pandas as pd
 import os
-
-
 class GUI: 
     
     #Create Window 
@@ -138,7 +142,6 @@ class GUI:
                               background = "white",
                               height = 125)
         self.chart_canvas.grid(row = 6, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
-
         
         #Thrust Label
         self.thrust_label = tk.Label(self.window,
@@ -152,7 +155,6 @@ class GUI:
                               background = "white",
                               height = 125)
         self.chart_canvas.grid(row = 6, column = 2, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
-
         #Pressure Transducer 1 Label
         self.PT1_label = tk.Label(self.window,
                               text = "Pressure Transducer 1",
@@ -165,7 +167,6 @@ class GUI:
                               background = "white",
                               height = 125)
         self.chart_canvas.grid(row = 8, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
-
     
         #Pressure Transducer 2 Label
         self.PT2_label = tk.Label(self.window,
@@ -179,7 +180,6 @@ class GUI:
                               background = "white",
                               height = 125)
         self.chart_canvas.grid(row = 8, column = 2, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
-
         
         #Pressure Transducer 3 Label
         self.PT3_label = tk.Label(self.window,
@@ -193,7 +193,6 @@ class GUI:
                               background = "white",
                               height = 125)
         self.chart_canvas.grid(row = 10, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
-
         
         #Pressure Transducer 4 Label
         self.PT4_label = tk.Label(self.window,
@@ -207,7 +206,6 @@ class GUI:
                               background = "white",
                               height = 125)
         self.chart_canvas.grid(row = 10, column = 2, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
-
         
         #Pressure Transducer 5 Label
         self.PT5_label = tk.Label(self.window,
@@ -225,6 +223,23 @@ class GUI:
       
         # Function Commands -----------------------------------------------------------------------------
       
+      '''
+    def create_plot(self, title, row, column):
+        """Create and embed a matplotlib plot with x and y axes"""
+        fig = Figure(figsize=(5, 2), dpi=100)
+        ax = fig.add_subplot(111)
+        ax.set_title(title)
+        ax.set_xlabel("Time (s)")
+        ax.set_ylabel("Value")
+        ax.grid(True)
+        
+        canvas = FigureCanvasTkAgg(fig, master=self.window)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.grid(row=row, column=column, columnspan=3, sticky="nsew", padx=5, pady=5)
+        canvas.draw()
+        
+        '''
+
         #Enable  
     def enable_buttons(self):
         # Enable Start and Abort buttons
@@ -253,18 +268,11 @@ class GUI:
     def abort(self):
         self.abort_button.config(background="red")  # Brighter red when clicked
         self.start_button.config(background="light green")  # Light green remains
-
                
         
 if __name__ == "__main__":
     window = GUI()
-    window.window.mainloop()        
-        
-
-
-
-
-
+    window.window.mainloop()  
 
 
         

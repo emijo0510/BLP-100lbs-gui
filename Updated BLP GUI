@@ -1,3 +1,4 @@
+  
 '''
     Engineers: Emily Jones & Advika Govindarajan
     Date Created: 10/7/24
@@ -68,7 +69,7 @@ class GUI:
         self.readfile_button = tk.Button(self.window,
                                  text = "Read Test",
                                  foreground = "black",
-                                 font = ("Times New Roman", 20),)
+                                 font = ("Times New Roman", 20))
         
         self.readfile_button.grid(row = 1, column = 2, sticky = "nsew", padx = 5, pady = 5)
     
@@ -260,15 +261,19 @@ class GUI:
         
         #Upload File
     def browse_button(self):
-        filename = filedialog.askopenfilename() #Get the path of the PDF based on the user's location selection
-        print(filename)
-        df = pd.read_excel(filename) # can also index sheet by name or fetch all sheets
-        return filename
+        filename = filedialog.askopenfilename()
+        if filename:  # Check if a file is selected
+            print(f"Selected file: {filename}")
+        try:
+            df = pd.read_excel(filename)
+            self.enable_buttons()  # Enable buttons after successful upload
+        except Exception as e:
+            print(f"Error loading file: {e}")
         
         
         # Start button 
     def start(self):
-        self.start_button.config(background="green")  # Brighter green when clicked
+        self.start_button.config(background= "green")  # Brighter green when clicked
         self.abort_button.config(background="light coral")  # Light red remains
         
         # Abort button 
@@ -280,6 +285,9 @@ class GUI:
 if __name__ == "__main__":
     window = GUI()
     window.window.mainloop()  
+
+
+        
 
 
         

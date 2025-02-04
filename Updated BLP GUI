@@ -28,7 +28,7 @@ class GUI:
     
     #Add widgets
     def widgets(self):
-        
+        button_width = 15
         #Title
         self.title = tk.Label(self.window,
                       text="BLP GUI",
@@ -42,13 +42,13 @@ class GUI:
         self.fileinput_entry = tk.Button(self.window,
                                    text="Upload File",
                                    foreground = "black",
-                                   font = ("Times New Roman", 20),
+                                   font = ("Times New Roman", 20), width = button_width,
                                    command= self.browse_button)
         self.fileinput_entry.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
         
         '''
         self.filename_entry = tk.Entry(self.window,
-                               textvariable = self.filename,
+                               textvariable = self.filename
                                background = "white",
                                foreground = "black",
                                font = ("Times New Roman", 20))
@@ -59,7 +59,7 @@ class GUI:
         self.FV04_button = tk.Button(self.window,
                               text = "FV-04",
                               foreground = "black",
-                              font = ("Times New Roman", 20),
+                              font = ("Times New Roman", 20),width = button_width,
                               state = "disabled")
         self.FV04_button.grid(row = 2, column = 0, sticky = "ew")
         
@@ -67,7 +67,7 @@ class GUI:
         self.OV04_button = tk.Button(self.window,
                               text = "OV-04",
                               foreground = "black",
-                              font = ("Times New Roman", 20),
+                              font = ("Times New Roman", 20),width = button_width,
                               state = "disabled")
         self.OV04_button.grid(row = 2, column = 1, sticky = "ew")
         
@@ -75,7 +75,7 @@ class GUI:
         self.FV02_button = tk.Button(self.window,
                               text = "FV-02",
                               foreground = "black",
-                              font = ("Times New Roman", 20),
+                              font = ("Times New Roman", 20),width = button_width,
                               state = "disabled")
         self.FV02_button.grid(row = 2, column = 2, sticky = "ew")
         
@@ -83,7 +83,7 @@ class GUI:
         self.OV02_button = tk.Button(self.window,
                               text = "OV-02",
                               foreground = "black",
-                              font = ("Times New Roman", 20),
+                              font = ("Times New Roman", 20),width = button_width,
                               state = "disabled")
         self.OV02_button.grid(row = 2, column = 3, sticky = "ew")
         

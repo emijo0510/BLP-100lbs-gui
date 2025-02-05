@@ -22,13 +22,16 @@ class GUI:
         self.window.columnconfigure(2, weight=1)
         self.window.columnconfigure(3, weight=1)
         self.window.columnconfigure(4, weight=1)
+
+        # Configure layout for uniform button sizes
+        for i in range(5):
+            self.window.columnconfigure(i, weight=1, uniform="col")
         
         self.test_files = {}
         self.widgets()
     
     #Add widgets
     def widgets(self):
-        button_width = 15
         #Title
         self.title = tk.Label(self.window,
                       text="BLP GUI",
@@ -42,13 +45,13 @@ class GUI:
         self.fileinput_entry = tk.Button(self.window,
                                    text="Upload File",
                                    foreground = "black",
-                                   font = ("Times New Roman", 20), width = button_width,
+                                   font = ("Times New Roman", 20),
                                    command= self.browse_button)
         self.fileinput_entry.grid(row = 1, column = 0, sticky = "nsew", padx = 5, pady = 5)
         
         '''
         self.filename_entry = tk.Entry(self.window,
-                               textvariable = self.filename
+                               textvariable = self.filename,
                                background = "white",
                                foreground = "black",
                                font = ("Times New Roman", 20))
@@ -59,7 +62,7 @@ class GUI:
         self.FV04_button = tk.Button(self.window,
                               text = "FV-04",
                               foreground = "black",
-                              font = ("Times New Roman", 20),width = button_width,
+                              font = ("Times New Roman", 20),
                               state = "disabled")
         self.FV04_button.grid(row = 2, column = 0, sticky = "ew")
         
@@ -67,7 +70,7 @@ class GUI:
         self.OV04_button = tk.Button(self.window,
                               text = "OV-04",
                               foreground = "black",
-                              font = ("Times New Roman", 20),width = button_width,
+                              font = ("Times New Roman", 20),
                               state = "disabled")
         self.OV04_button.grid(row = 2, column = 1, sticky = "ew")
         
@@ -75,7 +78,7 @@ class GUI:
         self.FV02_button = tk.Button(self.window,
                               text = "FV-02",
                               foreground = "black",
-                              font = ("Times New Roman", 20),width = button_width,
+                              font = ("Times New Roman", 20),
                               state = "disabled")
         self.FV02_button.grid(row = 2, column = 2, sticky = "ew")
         
@@ -83,7 +86,7 @@ class GUI:
         self.OV02_button = tk.Button(self.window,
                               text = "OV-02",
                               foreground = "black",
-                              font = ("Times New Roman", 20),width = button_width,
+                              font = ("Times New Roman", 20),
                               state = "disabled")
         self.OV02_button.grid(row = 2, column = 3, sticky = "ew")
         
@@ -106,6 +109,8 @@ class GUI:
                               state = "disabled",
                               command = self.abort)
         self.abort_button.grid(row = 1, column = 2, sticky = "nsew", padx = 5, pady = 5)
+
+        
         
         #Graphs Banner -------------------------------------------------------------------
         self.banner_label = tk.Label(self.window,
@@ -204,7 +209,7 @@ class GUI:
         self.chart_canvas = tk.Canvas(self.window,
                               background = "white",
                               height = 125)
-        self.chart_canvas.grid(row = 12, column = 0, columnspan = 3, sticky = "nsew", padx = 5, pady = 5)
+        self.chart_canvas.grid(row = 12, column = 0, columnspan = 2, sticky = "nsew", padx = 5, pady = 5)
         
       
         # Function Commands -----------------------------------------------------------------------------

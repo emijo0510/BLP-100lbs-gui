@@ -1,9 +1,3 @@
-'''
-    Engineers: Emily Jones & Advika Govindarajan
-    Date Created: 10/7/24
-    Current Draft
-'''
-
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -11,8 +5,7 @@ from tkinter import filedialog, messagebox
 from matplotlib.figure import Figure
 import pandas as pd
 import os
-from pycode import Wifi_Host,Telemetry,System_Health
-
+from pycode import Wifi_Host, Telemetry, System_Health
 
 class GUI:
     # Create Window
@@ -26,23 +19,17 @@ class GUI:
         self.window.columnconfigure(3, weight=1)
         self.window.columnconfigure(4, weight=1)
 
-        self.wifi = Wifi_Host()
-        self.sys_health = System_Health()
-        self.tel = Telemetry(self.wifi, self.sys_health)
-
-        if not self.check_wifi():
-            messagebox.showerror("WiFi Connection Failed", "Unable to connect to WiFi host. Exiting program.")
-            self.window.quit()  # Exit the program if WiFi connection fails
+        #self.wifi = Wifi_Host()
+        #self.sys_health = System_Health()
+        #self.tel = Telemetry(self.wifi, self.sys_health)
 
         # Configure layout for uniform button sizes
         for i in range(5):
             self.window.columnconfigure(i, weight=1, uniform="col")
 
         self.test_files = {}
-        self.valve_states = {"FV-04": 0, "OV-04": 0, "FV-02": 0, "OV-02": 0}
+        self.valve_states = {"FV-01": 0, "FV-02": 0, "FV-03": 0, "OV-03": 0}
         self.widgets()
-
-
 
     # Add widgets
     def widgets(self):
@@ -63,38 +50,37 @@ class GUI:
                                          command=self.browse_button)
         self.fileinput_entry.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
 
-
         # FV04 Check Button
-        self.FV04_button = tk.Button(self.window,
-                                     text="FV-04",
+        self.FV01_button = tk.Button(self.window,
+                                     text="FV-01",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("FV-04"))
-        self.FV04_button.grid(row=2, column=0, sticky="ew")
-
-        # OV04 Check Button
-        self.OV04_button = tk.Button(self.window,
-                                     text="OV-04",
-                                     foreground="black",
-                                     font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("OV-04"))
-        self.OV04_button.grid(row=2, column=1, sticky="ew")
+                                     command=lambda: self.toggle_valve("FV-01"))
+        self.FV01_button.grid(row=2, column=0, sticky="ew")
 
         # FV02 Check Button
-        self.FV02_button = tk.Button(self.window,
+        self.FV02_button_1 = tk.Button(self.window,  # Renamed button
                                      text="FV-02",
                                      foreground="black",
                                      font=("Times New Roman", 20),
                                      command=lambda: self.toggle_valve("FV-02"))
-        self.FV02_button.grid(row=2, column=2, sticky="ew")
+        self.FV02_button_1.grid(row=2, column=1, sticky="ew")
 
-        # OV02 Check Button
-        self.OV02_button = tk.Button(self.window,
-                                     text="OV-02",
+        # FV03 Check Button
+        self.FV03_button = tk.Button(self.window,
+                                     text="FV-03",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("OV-02"))
-        self.OV02_button.grid(row=2, column=3, sticky="ew")
+                                     command=lambda: self.toggle_valve("FV-03"))
+        self.FV03_button.grid(row=2, column=2, sticky="ew")
+
+        # OV03 Check Button
+        self.OV03_button = tk.Button(self.window,
+                                     text="OV-03",
+                                     foreground="black",
+                                     font=("Times New Roman", 20),
+                                     command=lambda: self.toggle_valve("OV-03"))
+        self.OV03_button.grid(row=2, column=3, sticky="ew")
 
         # Start Button
         self.start_button = tk.Button(self.window,
@@ -114,7 +100,7 @@ class GUI:
                                       command=self.abort)
         self.abort_button.grid(row=1, column=2, sticky="nsew", padx=5, pady=5)
 
-        # Graphs Banner -------------------------------------------------------------------
+        # Graphs Banner---------------------------------------------------------------------
         self.banner_label = tk.Label(self.window,
                                      text="Graphs",
                                      font=("Times New Roman", 20),
@@ -134,7 +120,6 @@ class GUI:
                                       background="white",
                                       height=125)
         self.chart_canvas.grid(row=6, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
-
         # Thrust Label
         self.thrust_label = tk.Label(self.window,
                                      text="Thrust",
@@ -147,7 +132,6 @@ class GUI:
                                       background="white",
                                       height=125)
         self.chart_canvas.grid(row=6, column=2, columnspan=2, sticky="nsew", padx=5, pady=5)
-
         # Pressure Transducer 1 Label
         self.PT1_label = tk.Label(self.window,
                                   text="Pressure Transducer 1",
@@ -160,7 +144,6 @@ class GUI:
                                       background="white",
                                       height=125)
         self.chart_canvas.grid(row=6, column=4, columnspan=2, sticky="nsew", padx=5, pady=5)
-
         # Pressure Transducer 2 Label
         self.PT2_label = tk.Label(self.window,
                                   text="Pressure Transducer 2",
@@ -173,7 +156,6 @@ class GUI:
                                       background="white",
                                       height=125)
         self.chart_canvas.grid(row=8, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
-
         # Pressure Transducer 3 Label
         self.PT3_label = tk.Label(self.window,
                                   text="Pressure Transducer 3",
@@ -213,8 +195,7 @@ class GUI:
                                       height=125)
         self.chart_canvas.grid(row=12, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
 
-        # Function Commands -----------------------------------------------------------------------------
-    #Check Wifi
+        # Function Commands
     def check_wifi(self):
         # Attempt to connect to the WiFi host
         try:
@@ -248,17 +229,16 @@ class GUI:
         self.abort_button.config(background="red")  # Brighter red when clicked
         self.start_button.config(background="light green")  # Light green remains
 
-    #Toggle Valves
+    # Toggle Valves
     def toggle_valve(self, valve_name):
-
-        if valve_name == "FV-04":
-            valve_button = self.FV04_button
-        elif valve_name == "OV-04":
-            valve_button = self.OV04_button
+        if valve_name == "FV-01":
+            valve_button = self.FV01_button
         elif valve_name == "FV-02":
-            valve_button = self.FV02_button
-        elif valve_name == "OV-02":
-            valve_button = self.OV02_button
+            valve_button = self.FV02_button_1  # Renamed button
+        elif valve_name == "FV-03":
+            valve_button = self.FV03_button
+        elif valve_name == "OV-03":
+            valve_button = self.OV03_button
 
         if self.valve_states[valve_name] == 0:
             self.tel.open_valve(valve_button)
@@ -274,7 +254,7 @@ class GUI:
             self.tel.send_data()
             valve_button.config(bg="red")
 
-    #Create Plots
+    # Create Plots
     def create_plot(self, title, row, column):
         """Create and embed a matplotlib plot with x and y axes"""
         fig = Figure(figsize=(5, 2), dpi=100)
@@ -289,7 +269,7 @@ class GUI:
         canvas_widget.grid(row=row, column=column, columnspan=3, sticky="nsew", padx=5, pady=5)
         canvas.draw()
 
-
 if __name__ == "__main__":
     window = GUI()
-    window.window.mainloop() 
+    window.window.mainloop()
+

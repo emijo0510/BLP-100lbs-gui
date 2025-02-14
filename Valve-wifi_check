@@ -1,3 +1,4 @@
+
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -6,6 +7,7 @@ from matplotlib.figure import Figure
 import pandas as pd
 import os
 from pycode import Wifi_Host, Telemetry, System_Health
+from pycode import PT1,PT2,PT3,PT4,PT5,FS,TS,RR
 
 class GUI:
     # Create Window
@@ -19,16 +21,14 @@ class GUI:
         self.window.columnconfigure(3, weight=1)
         self.window.columnconfigure(4, weight=1)
 
-        #self.wifi = Wifi_Host()
-        #self.sys_health = System_Health()
-        #self.tel = Telemetry(self.wifi, self.sys_health)
+
+        self.valve_status = {'FV-01': 0, 'FV-02': 0, 'FV-03': 0, 'OV-03': 0}
 
         # Configure layout for uniform button sizes
         for i in range(5):
             self.window.columnconfigure(i, weight=1, uniform="col")
 
         self.test_files = {}
-        self.valve_states = {"FV-01": 0, "FV-02": 0, "FV-03": 0, "OV-03": 0}
         self.widgets()
 
     # Add widgets
@@ -50,28 +50,28 @@ class GUI:
                                          command=self.browse_button)
         self.fileinput_entry.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
 
-        # FV04 Check Button
+        # FV01 Check Button
         self.FV01_button = tk.Button(self.window,
                                      text="FV-01",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("FV-01"))
+                                     command=lambda: self.toggle_valve(1))
         self.FV01_button.grid(row=2, column=0, sticky="ew")
 
         # FV02 Check Button
-        self.FV02_button_1 = tk.Button(self.window,  # Renamed button
+        self.FV02_button = tk.Button(self.window,  # Renamed button
                                      text="FV-02",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("FV-02"))
-        self.FV02_button_1.grid(row=2, column=1, sticky="ew")
+                                     command=lambda: self.toggle_valve(2))
+        self.FV02_button.grid(row=2, column=1, sticky="ew")
 
         # FV03 Check Button
         self.FV03_button = tk.Button(self.window,
                                      text="FV-03",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("FV-03"))
+                                     command=lambda: self.toggle_valve(3))
         self.FV03_button.grid(row=2, column=2, sticky="ew")
 
         # OV03 Check Button
@@ -79,7 +79,7 @@ class GUI:
                                      text="OV-03",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve("OV-03"))
+                                     command=lambda: self.toggle_valve(4))
         self.OV03_button.grid(row=2, column=3, sticky="ew")
 
         # Start Button
@@ -195,19 +195,9 @@ class GUI:
                                       height=125)
         self.chart_canvas.grid(row=12, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
 
-        # Function Commands
+    # Function Commands-------------------------------------------------------------------------------------------
     def check_wifi(self):
-        # Attempt to connect to the WiFi host
-        try:
-            if self.wifi.connect():  # Assuming Wifi_Host has a connect method
-                print("WiFi connection successful.")
-                return True
-            else:
-                print("WiFi connection failed.")
-                return False
-        except Exception as e:
-            print(f"Error during WiFi connection: {e}")
-            return False
+        pass
 
     # Upload File
     def browse_button(self):
@@ -230,7 +220,9 @@ class GUI:
         self.start_button.config(background="light green")  # Light green remains
 
     # Toggle Valves
+    '''
     def toggle_valve(self, valve_name):
+        tel.get_data()
         if valve_name == "FV-01":
             valve_button = self.FV01_button
         elif valve_name == "FV-02":
@@ -241,18 +233,72 @@ class GUI:
             valve_button = self.OV03_button
 
         if self.valve_states[valve_name] == 0:
-            self.tel.open_valve(valve_button)
+            tel.open_valve(valve_button)
             self.valve_states[valve_name] = 1
             print(f"{valve_name} opened")
-            self.tel.send_data()
+            tel.send_data()
             valve_button.config(bg="green")
 
         else:
             self.valve_states[valve_name] = 0
-            self.tel.close_valve(valve_button)
+            tel.close_valve(valve_button)
             print(f"{valve_name} closed")
-            self.tel.send_data()
+            tel.send_data()
             valve_button.config(bg="red")
+        '''
+
+    def toggle_valve(self, num):
+        # 0 = closed , 1 = open
+        tel.get_data()
+        if num == 1 and self.valve_status['FV-01'] == 0:
+            tel.open_valve(1)
+            tel.send_data()
+            self.FV01_button.config(bg="green")
+            self.valve_status['FV-01'] = 1
+            print("FV-01 opened")
+        elif num == 2 and self.valve_status['FV-02'] == 0:
+            tel.open_valve(2)
+            tel.send_data()
+            self.FV02_button.config(bg="green")
+            self.valve_status['FV-02'] = 1
+            print("FV-02 opened")
+        elif num == 3 and self.valve_status['FV-03'] == 0:
+            tel.open_valve(3)
+            tel.send_data()
+            self.FV03_button.config(bg="green")
+            self.valve_status['FV-03'] = 1
+            print("FV-03 opened")
+        elif num == 4 and self.valve_status['OV-03'] == 0:
+            tel.open_valve(4)
+            tel.send_data()
+            self.OV03_button.config(bg="green")
+            self.valve_status['OV-03'] = 1
+            print("OV-03 opened")
+        elif num == 1 and self.valve_status['FV-01'] == 1:
+            tel.close_valve(1)
+            tel.send_data()
+            self.FV01_button.config(bg="red")
+            self.valve_status['FV-01'] = 0
+            print("FV-01 closed")
+        elif num == 2 and self.valve_status['FV-02'] == 1:
+            tel.close_valve(2)
+            tel.send_data()
+            self.FV02_button.config(bg="red")
+            self.valve_status['FV-02'] = 0
+            print("FV-02 closed")
+        elif num == 3 and self.valve_status['FV-03'] == 1:
+            tel.close_valve(3)
+            tel.send_data()
+            self.FV03_button.config(bg="red")
+            self.valve_status['FV-03'] = 0
+            print("FV-03 closed")
+        elif num == 4 and self.valve_status['OV-03'] == 1:
+            tel.close_valve(4)
+            tel.send_data()
+            self.OV03_button.config(bg="red")
+            self.valve_status['OV-03'] = 0
+            print("OV-03 closed")
+
 
     # Create Plots
     def create_plot(self, title, row, column):
@@ -271,5 +317,12 @@ class GUI:
 
 if __name__ == "__main__":
     window = GUI()
+    #wifi = Wifi_Host()
+    #sys = System_Health()
+    #tel = Telemetry(wifi,sys)
     window.window.mainloop()
+
+
+
+
 

@@ -220,32 +220,6 @@ class GUI:
         self.start_button.config(background="light green")  # Light green remains
 
     # Toggle Valves
-    '''
-    def toggle_valve(self, valve_name):
-        tel.get_data()
-        if valve_name == "FV-01":
-            valve_button = self.FV01_button
-        elif valve_name == "FV-02":
-            valve_button = self.FV02_button_1  # Renamed button
-        elif valve_name == "FV-03":
-            valve_button = self.FV03_button
-        elif valve_name == "OV-03":
-            valve_button = self.OV03_button
-
-        if self.valve_states[valve_name] == 0:
-            tel.open_valve(valve_button)
-            self.valve_states[valve_name] = 1
-            print(f"{valve_name} opened")
-            tel.send_data()
-            valve_button.config(bg="green")
-
-        else:
-            self.valve_states[valve_name] = 0
-            tel.close_valve(valve_button)
-            print(f"{valve_name} closed")
-            tel.send_data()
-            valve_button.config(bg="red")
-        '''
 
     def toggle_valve(self, num):
         # 0 = closed , 1 = open

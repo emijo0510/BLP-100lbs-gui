@@ -6,12 +6,32 @@ from tkinter import filedialog, messagebox
 from matplotlib.figure import Figure
 import pandas as pd
 import os
-from pycode import Wifi_Host, Telemetry, System_Health
-from pycode import PT1,PT2,PT3,PT4,PT5,FS,TS,RR
+from pycode import  Telemetry, System_Health, Metrics
+from pycode import V1,V2,V3,V4,C,T,CS,A
+import socket
+import time
 
 class GUI:
     # Create Window
     def __init__(self):
+        self.chart_canvas = None
+        self.PT5_label = None
+        self.PT4_label = None
+        self.PT3_label = None
+        self.PT2_label = None
+        self.PT1_label = None
+        self.thrust_label = None
+        self.temp_label = None
+        self.banner_label = None
+        self.abort_button = None
+        self.start_button = None
+        self.OV03_button = None
+        self.FV03_button = None
+        self.FV02_button = None
+        self.NV02_button = None
+        self.file_input_entry = None
+        self.file_input = None
+        self.title = None
         self.window = tk.Tk()
         self.window.title("BLP GUI")
         self.window.geometry('1000x1000')
@@ -22,13 +42,13 @@ class GUI:
         self.window.columnconfigure(4, weight=1)
 
 
-        self.valve_status = {'FV-01': 0, 'FV-02': 0, 'FV-03': 0, 'OV-03': 0}
+        self.valve_status = {'NV-02': 0, 'FV-02': 0, 'FV-03': 0, 'OV-03': 0}
 
         # Configure layout for uniform button sizes
         for i in range(5):
             self.window.columnconfigure(i, weight=1, uniform="col")
 
-        self.test_files = {}
+
         self.widgets()
 
     # Add widgets
@@ -42,28 +62,28 @@ class GUI:
         self.title.grid(row=0, columnspan=5, sticky="nsew")
 
         # File Input
-        self.fileinput = tk.StringVar()
-        self.fileinput_entry = tk.Button(self.window,
+        self.file_input = tk.StringVar()
+        self.file_input_entry = tk.Button(self.window,
                                          text="Upload File",
                                          foreground="black",
                                          font=("Times New Roman", 20),
-                                         command=self.browse_button)
-        self.fileinput_entry.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+                                         command= self.upload_file)
+        self.file_input_entry.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
 
-        # FV01 Check Button
-        self.FV01_button = tk.Button(self.window,
-                                     text="FV-01",
+        # NV02 Check Button
+        self.NV02_button = tk.Button(self.window,
+                                     text="NV-02",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve(1))
-        self.FV01_button.grid(row=2, column=0, sticky="ew")
+                                     command=lambda: self.toggle_valve(V1))
+        self.NV02_button.grid(row=2, column=0, sticky="ew")
 
         # FV02 Check Button
         self.FV02_button = tk.Button(self.window,  # Renamed button
                                      text="FV-02",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve(2))
+                                     command=lambda: self.toggle_valve(V2))
         self.FV02_button.grid(row=2, column=1, sticky="ew")
 
         # FV03 Check Button
@@ -71,7 +91,7 @@ class GUI:
                                      text="FV-03",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve(3))
+                                     command=lambda: self.toggle_valve(V3))
         self.FV03_button.grid(row=2, column=2, sticky="ew")
 
         # OV03 Check Button
@@ -79,8 +99,9 @@ class GUI:
                                      text="OV-03",
                                      foreground="black",
                                      font=("Times New Roman", 20),
-                                     command=lambda: self.toggle_valve(4))
+                                     command=lambda: self.toggle_valve(V4))
         self.OV03_button.grid(row=2, column=3, sticky="ew")
+    
 
         # Start Button
         self.start_button = tk.Button(self.window,
@@ -196,82 +217,85 @@ class GUI:
         self.chart_canvas.grid(row=12, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
 
     # Function Commands-------------------------------------------------------------------------------------------
-    def check_wifi(self):
-        pass
 
     # Upload File
-    def browse_button(self):
-        filename = filedialog.askopenfilename()
-        if filename:  # Check if a file is selected
-            print(f"Selected file: {filename}")
-        try:
-            df = pd.read_excel(filename)
-        except Exception as e:
-            print(f"Error loading file: {e}")
+    def upload_file(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:  # Check if a file is selected
+            print(f"Selected file: {file_path}")
+            try:
+                df = pd.read_excel(file_path) # only works for excel files
+                tel.upload_test_sequence(file_path)
+            except Exception as e:
+                print(f"Error loading file: {e}")
 
     # Start button
     def start(self):
+        tel.start_test()
+        tel.send_data()
         self.start_button.config(background="green")  # Brighter green when clicked
         self.abort_button.config(background="light coral")  # Light red remains
 
     # Abort button
     def abort(self):
+        tel.abort()
+        tel.send_data()
         self.abort_button.config(background="red")  # Brighter red when clicked
         self.start_button.config(background="light green")  # Light green remains
 
     # Toggle Valves
-
-    def toggle_valve(self, num):
+    def toggle_valve(self, name):
         # 0 = closed , 1 = open
-        tel.get_data()
-        if num == 1 and self.valve_status['FV-01'] == 0:
-            tel.open_valve(1)
+        if name == V1 and self.valve_status['NV-02'] == 0:
+            tel.open_valve(V1)
             tel.send_data()
-            self.FV01_button.config(bg="green")
-            self.valve_status['FV-01'] = 1
-            print("FV-01 opened")
-        elif num == 2 and self.valve_status['FV-02'] == 0:
-            tel.open_valve(2)
+            self.NV02_button.config(bg="green")
+            self.valve_status['NV-02'] = 1
+            print("NV-02 opened")
+        elif name == V2 and self.valve_status['FV-02'] == 0:
+            tel.open_valve(V2)
             tel.send_data()
             self.FV02_button.config(bg="green")
             self.valve_status['FV-02'] = 1
             print("FV-02 opened")
-        elif num == 3 and self.valve_status['FV-03'] == 0:
-            tel.open_valve(3)
+        elif name == V3 and self.valve_status['FV-03'] == 0:
+            tel.open_valve(V3)
             tel.send_data()
             self.FV03_button.config(bg="green")
             self.valve_status['FV-03'] = 1
             print("FV-03 opened")
-        elif num == 4 and self.valve_status['OV-03'] == 0:
-            tel.open_valve(4)
+        elif name == V4 and self.valve_status['OV-03'] == 0:
+            tel.open_valve(V4)
             tel.send_data()
             self.OV03_button.config(bg="green")
             self.valve_status['OV-03'] = 1
             print("OV-03 opened")
-        elif num == 1 and self.valve_status['FV-01'] == 1:
-            tel.close_valve(1)
+        elif name == V1 and self.valve_status['NV-02'] == 1:
+            tel.close_valve(V1)
             tel.send_data()
-            self.FV01_button.config(bg="red")
-            self.valve_status['FV-01'] = 0
-            print("FV-01 closed")
-        elif num == 2 and self.valve_status['FV-02'] == 1:
-            tel.close_valve(2)
+            self.NV02_button.config(bg="red")
+            self.valve_status['NV-02'] = 0
+            print("NV-02 closed")
+        elif name == V2 and self.valve_status['FV-02'] == 1:
+            tel.close_valve(V2)
             tel.send_data()
             self.FV02_button.config(bg="red")
             self.valve_status['FV-02'] = 0
             print("FV-02 closed")
-        elif num == 3 and self.valve_status['FV-03'] == 1:
-            tel.close_valve(3)
+        elif name == V3 and self.valve_status['FV-03'] == 1:
+            tel.close_valve(V3)
             tel.send_data()
             self.FV03_button.config(bg="red")
             self.valve_status['FV-03'] = 0
             print("FV-03 closed")
-        elif num == 4 and self.valve_status['OV-03'] == 1:
-            tel.close_valve(4)
+        elif name == V4 and self.valve_status['OV-03'] == 1:
+            tel.close_valve(V4)
             tel.send_data()
             self.OV03_button.config(bg="red")
             self.valve_status['OV-03'] = 0
             print("OV-03 closed")
+        else:
+            print("Error")
 
 
     # Create Plots
@@ -291,10 +315,18 @@ class GUI:
 
 if __name__ == "__main__":
     window = GUI()
-    #wifi = Wifi_Host()
-    #sys = System_Health()
-    #tel = Telemetry(wifi,sys)
+    sys = System_Health()
+    tel = Telemetry(sys)
     window.window.mainloop()
+
+
+
+
+
+
+
+
+
 
 
 

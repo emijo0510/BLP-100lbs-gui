@@ -134,87 +134,85 @@ class GUI:
                                    text="Temperature",
                                    background="white",
                                    foreground="black",
-                                   font=("Times New Roman", 20), )
+                                   font=("Times New Roman", 10), )
         self.temp_label.grid(row=5, column=0, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=6, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 6,
+                                            column = 0)
+        
         # Thrust Label
         self.thrust_label = tk.Label(self.window,
                                      text="Thrust",
                                      background="white",
                                      foreground="black",
-                                     font=("Times New Roman", 20), )
+                                     font=("Times New Roman", 10), )
         self.thrust_label.grid(row=5, column=2, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=6, column=2, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 6,
+                                            column = 2)
+        
         # Pressure Transducer 1 Label
         self.PT1_label = tk.Label(self.window,
                                   text="Pressure Transducer 1",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 20), )
+                                  font=("Times New Roman", 10), )
         self.PT1_label.grid(row=5, column=4, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=6, column=4, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 6,
+                                            column = 4)
+        
         # Pressure Transducer 2 Label
         self.PT2_label = tk.Label(self.window,
                                   text="Pressure Transducer 2",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 20), )
+                                  font=("Times New Roman", 10), )
         self.PT2_label.grid(row=7, column=0, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=8, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 8,
+                                            column = 0)
+        
         # Pressure Transducer 3 Label
         self.PT3_label = tk.Label(self.window,
                                   text="Pressure Transducer 3",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 20), )
+                                  font=("Times New Roman", 10), )
         self.PT3_label.grid(row=7, column=2, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=8, column=2, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 8,
+                                            column = 2)
 
         # Pressure Transducer 4 Label
         self.PT4_label = tk.Label(self.window,
                                   text="Pressure Transducer 4",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 20), )
+                                  font=("Times New Roman", 10), )
         self.PT4_label.grid(row=7, column=4, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=8, column=4, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 8,
+                                            column = 4)
 
         # Pressure Transducer 5 Label
         self.PT5_label = tk.Label(self.window,
                                   text="Pressure Transducer 5",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 20), )
+                                  font=("Times New Roman", 10), )
         self.PT5_label.grid(row=11, column=0, sticky="nsew", padx=5, pady=5)
 
-        self.chart_canvas = tk.Canvas(self.window,
-                                      background="white",
-                                      height=125)
-        self.chart_canvas.grid(row=12, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
+        self.chart_canvas = self.create_plot(self.window, 
+                                             row = 12,
+                                            column = 0)
+        
 
     # Function Commands-------------------------------------------------------------------------------------------
 
@@ -303,14 +301,18 @@ class GUI:
         """Create and embed a matplotlib plot with x and y axes"""
         fig = Figure(figsize=(5, 2), dpi=100)
         ax = fig.add_subplot(111)
-        ax.set_title(title)
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Value")
+        ax.set_xlabel("Time (s)", fontsize=7)
+        ax.set_ylabel("Value", fontsize=7)
         ax.grid(True)
+
+        fig.tight_layout(pad=3.0)  # Adds space between the plot and axis labels
+    
+        fig.subplots_adjust(bottom=0.3)
+        fig.subplots_adjust(top=0.9)
 
         canvas = FigureCanvasTkAgg(fig, master=self.window)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.grid(row=row, column=column, columnspan=3, sticky="nsew", padx=5, pady=5)
+        canvas_widget.grid(row=row, column=column, columnspan=2, sticky="nsew", padx=5, pady=5)
         canvas.draw()
 
 if __name__ == "__main__":
@@ -318,11 +320,6 @@ if __name__ == "__main__":
     sys = System_Health()
     tel = Telemetry(sys)
     window.window.mainloop()
-
-
-
-
-
 
 
 

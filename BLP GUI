@@ -1,4 +1,4 @@
-
+#warning box and timer
 import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -10,6 +10,7 @@ from pycode import  Telemetry, System_Health, Metrics
 from pycode import V1,V2,V3,V4,C,T,CS,A
 import socket
 import time
+from serial_pc import BT
 
 class GUI:
     # Create Window
@@ -111,6 +112,17 @@ class GUI:
                                       font=("Times New Roman", 20),
                                       command=self.start)
         self.start_button.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+        '''
+
+        # check connection button
+        self.check_connection = tk.Button(self.window,
+                                      text="Check Connection",
+                                      background="white",
+                                      foreground="black",
+                                      font=("Times New Roman", 20),
+                                      command=self.check_connection)
+        self.check_connection.grid(row=1, column=3, sticky="nsew", padx=5, pady=5)
+        '''
 
         # Abort Button
         self.abort_button = tk.Button(self.window,
@@ -121,97 +133,103 @@ class GUI:
                                       command=self.abort)
         self.abort_button.grid(row=1, column=2, sticky="nsew", padx=5, pady=5)
 
-        # Graphs Banner---------------------------------------------------------------------
-        self.banner_label = tk.Label(self.window,
-                                     text="Graphs",
-                                     font=("Times New Roman", 20),
-                                     background="light pink",
-                                     foreground="black")
-        self.banner_label.grid(row=4, column=0, columnspan=5, sticky="nsew", padx=5, pady=5)
-
-        # Temperature Label
-        self.temp_label = tk.Label(self.window,
-                                   text="Temperature",
-                                   background="white",
-                                   foreground="black",
-                                   font=("Times New Roman", 10), )
-        self.temp_label.grid(row=5, column=0, sticky="nsew", padx=5, pady=5)
-
-        self.chart_canvas = self.create_plot(self.window, 
-                                             row = 6,
-                                            column = 0)
+        # Note Box
+        self.note_box = tk.Label(self.window,
+                                 text = "Connecting...",
+                                  background = "white",
+                                  foreground = "black",
+                                  font=("Times New Roman", 15))
+        self.note_box.grid(row=1, column=4, sticky="nsew", padx=5, pady=5)
         
         # Thrust Label
         self.thrust_label = tk.Label(self.window,
                                      text="Thrust",
                                      background="white",
                                      foreground="black",
-                                     font=("Times New Roman", 10), )
-        self.thrust_label.grid(row=5, column=2, sticky="nsew", padx=5, pady=5)
+                                     font=("Times New Roman", 15), )
+        self.thrust_label.grid(row=5, column=0, sticky="nsew", padx=5, pady=5)
 
         self.chart_canvas = self.create_plot(self.window, 
                                              row = 6,
-                                            column = 2)
+                                            column = 0,
+                                            xlabel = "Time (s)",
+                                            ylabel = "Thrust (lbf)",
+                                            data = [1, 2, 3, 4])
         
         # Pressure Transducer 1 Label
         self.PT1_label = tk.Label(self.window,
                                   text="Pressure Transducer 1",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 10), )
-        self.PT1_label.grid(row=5, column=4, sticky="nsew", padx=5, pady=5)
+                                  font=("Times New Roman", 15), )
+        self.PT1_label.grid(row=5, column=2, sticky="nsew", padx=5, pady=5)
 
         self.chart_canvas = self.create_plot(self.window, 
                                              row = 6,
-                                            column = 4)
+                                            column = 2,
+                                            xlabel = "Time (s)",
+                                            ylabel = "Pressure (PSI)",
+                                            data = [1, 2, 3, 4])
         
         # Pressure Transducer 2 Label
         self.PT2_label = tk.Label(self.window,
                                   text="Pressure Transducer 2",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 10), )
-        self.PT2_label.grid(row=7, column=0, sticky="nsew", padx=5, pady=5)
+                                  font=("Times New Roman", 15), )
+        self.PT2_label.grid(row=5, column=4, sticky="nsew", padx=5, pady=5)
 
         self.chart_canvas = self.create_plot(self.window, 
-                                             row = 8,
-                                            column = 0)
+                                             row = 6,
+                                            column = 4,
+                                            xlabel = "Time (s)",
+                                            ylabel = "Pressure (PSI)",
+                                            data = [4, 5, 6, 7])
         
         # Pressure Transducer 3 Label
         self.PT3_label = tk.Label(self.window,
                                   text="Pressure Transducer 3",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 10), )
-        self.PT3_label.grid(row=7, column=2, sticky="nsew", padx=5, pady=5)
+                                  font=("Times New Roman", 15), )
+        self.PT3_label.grid(row=7, column=0, sticky="nsew", padx=5, pady=5)
 
         self.chart_canvas = self.create_plot(self.window, 
                                              row = 8,
-                                            column = 2)
+                                            column = 0,
+                                            xlabel = "Time (s)",
+                                            ylabel = "Pressure (PSI)",
+                                            data = [5, 2, 3, 7])
 
         # Pressure Transducer 4 Label
         self.PT4_label = tk.Label(self.window,
                                   text="Pressure Transducer 4",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 10), )
-        self.PT4_label.grid(row=7, column=4, sticky="nsew", padx=5, pady=5)
+                                  font=("Times New Roman", 15), )
+        self.PT4_label.grid(row=7, column=2, sticky="nsew", padx=5, pady=5)
 
         self.chart_canvas = self.create_plot(self.window, 
                                              row = 8,
-                                            column = 4)
+                                            column = 2,
+                                            xlabel = "Time (s)",
+                                            ylabel = "Pressure (PSI)",
+                                            data = [1, 5, 3, 4])
 
         # Pressure Transducer 5 Label
         self.PT5_label = tk.Label(self.window,
                                   text="Pressure Transducer 5",
                                   background="white",
                                   foreground="black",
-                                  font=("Times New Roman", 10), )
-        self.PT5_label.grid(row=11, column=0, sticky="nsew", padx=5, pady=5)
+                                  font=("Times New Roman", 15), )
+        self.PT5_label.grid(row=7, column=4, sticky="nsew", padx=5, pady=5)
 
         self.chart_canvas = self.create_plot(self.window, 
-                                             row = 12,
-                                            column = 0)
+                                             row = 8,
+                                            column = 4,
+                                            xlabel = "Time (s)",
+                                            ylabel = "Pressure (PSI)",
+                                            data = [1, 2, 3, 4])
         
 
     # Function Commands-------------------------------------------------------------------------------------------
@@ -241,15 +259,30 @@ class GUI:
         self.abort_button.config(background="red")  # Brighter red when clicked
         self.start_button.config(background="light green")  # Light green remains
 
+    '''
+    #check connection button
+    def check_connection(self):
+        
+        if BT.connect_to_esp32() == True:
+            self.note_box.config(text = "Connected")
+            self.check_connection.config(background = "green")
+        
+        else:
+            self.note_box.config(text = "Connection Failed")
+            self.check_connection.config(background = "red")
+            '''
+            
+
     # Toggle Valves
     def toggle_valve(self, name):
         # 0 = closed , 1 = open
         if name == V1 and self.valve_status['NV-02'] == 0:
-            tel.open_valve(V1)
-            tel.send_data()
+            #tel.open_valve(V1)
+            #tel.send_data()
             self.NV02_button.config(bg="green")
             self.valve_status['NV-02'] = 1
             print("NV-02 opened")
+            self.note_box.config(text = "NV-02 Open")
         elif name == V2 and self.valve_status['FV-02'] == 0:
             tel.open_valve(V2)
             tel.send_data()
@@ -269,11 +302,12 @@ class GUI:
             self.valve_status['OV-03'] = 1
             print("OV-03 opened")
         elif name == V1 and self.valve_status['NV-02'] == 1:
-            tel.close_valve(V1)
-            tel.send_data()
+            #tel.close_valve(V1)
+            #tel.send_data()
             self.NV02_button.config(bg="red")
             self.valve_status['NV-02'] = 0
             print("NV-02 closed")
+            self.note_box.config(text = "NV-02 Close")
         elif name == V2 and self.valve_status['FV-02'] == 1:
             tel.close_valve(V2)
             tel.send_data()
@@ -295,15 +329,17 @@ class GUI:
         else:
             print("Error")
 
+    
 
     # Create Plots
-    def create_plot(self, title, row, column):
+    def create_plot(self, title, row, column, xlabel, ylabel, data):
         """Create and embed a matplotlib plot with x and y axes"""
-        fig = Figure(figsize=(5, 2), dpi=100)
+        fig = Figure(figsize=(5, 3), dpi=100)
         ax = fig.add_subplot(111)
-        ax.set_xlabel("Time (s)", fontsize=7)
-        ax.set_ylabel("Value", fontsize=7)
+        ax.set_xlabel(xlabel, fontsize=10)
+        ax.set_ylabel(ylabel, fontsize=10)
         ax.grid(True)
+        ax.plot(data) #input array of the data to graph
 
         fig.tight_layout(pad=3.0)  # Adds space between the plot and axis labels
     
@@ -320,10 +356,6 @@ if __name__ == "__main__":
     sys = System_Health()
     tel = Telemetry(sys)
     window.window.mainloop()
-
-
-
-
 
 
 
